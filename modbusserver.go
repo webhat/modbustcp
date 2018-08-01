@@ -47,22 +47,18 @@ func ReadRegisters(s *mbserver.Server, frame mbserver.Framer) ([]byte, *mbserver
 }
 
 func WriteRegisters(s *mbserver.Server, frame mbserver.Framer) ([]byte, *mbserver.Exception) {
-	register, numRegs, endRegister := registerAddressAndNumber(frame)
+	register, value := registerAddressAndValue(frame)
 	// Check the request is within the allocated memory
-	if endRegister > 65535 {
+	if register > 65535 {
 		return []byte{}, &mbserver.IllegalDataAddress
 	}
-	dataSize := numRegs / 8
-	if (numRegs % 8) != 0 {
-		dataSize++
-	}
-	data := make([]byte, 1+dataSize)
-	data[0] = byte(dataSize)
-	for i := range s.DiscreteInputs[register:endRegister] {
-		// Return all 1s, regardless of the value in the DiscreteInputs array.
-		shift := uint(i) % 8
-		data[1+i/8] |= byte(1 << shift)
-	}
+
+	data := make([]byte, 4)
+	data[0] = byte(int(register / 256))
+	data[1] = byte(register % 256)
+	data[2] = byte(int(value / 256))
+	data[3] = byte(value % 256)
+
 	return data, &mbserver.Success
 }
 
@@ -72,4 +68,11 @@ func registerAddressAndNumber(frame mbserver.Framer) (register int, numRegs int,
 	numRegs = int(binary.BigEndian.Uint16(data[2:4]))
 	endRegister = register + numRegs
 	return register, numRegs, endRegister
+}
+
+func registerAddressAndValue(frame mbserver.Framer) (int, uint16) {
+	data := frame.GetData()
+	register := int(binary.BigEndian.Uint16(data[0:2]))
+	value := binary.BigEndian.Uint16(data[2:4])
+	return register, value
 }
