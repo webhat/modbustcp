@@ -13,3 +13,5 @@ modbustcp
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+modbus-demo-*.tar.bz2
+modbus-demo-*
