@@ -1,0 +1,47 @@
+#!/sbin/openrc-run
+# Copyright 1999-2015 Gentoo Foundation, Daniel Crompton
+# Distributed under the terms of the GNU General Public License v2
+
+extra_commands="checkconfig"
+extra_started_commands="reload"
+
+: ${MODBUSD_PIDFILE:=/var/run/${SVCNAME}.pid}
+: ${MODBUSD_BINARY:=/usr/sbin/modbustcp}
+
+depend() {
+        use logger dns
+}
+
+checkconfig() {
+        return 0
+}
+
+start() {
+        checkconfig || return 1
+
+        ebegin "Starting ${SVCNAME}"
+        start-stop-daemon -b --start --exec "${MODBUSD_BINARY}" \
+            --pidfile "${MODBUSD_PIDFILE}" \
+            -- ${MODBUSD_OPTS}
+        eend $?
+}
+
+stop() {
+        if [ "${RC_CMD}" = "restart" ] ; then
+                checkconfig || return 1
+        fi
+
+        ebegin "Stopping ${SVCNAME}"
+        start-stop-daemon --stop --exec "${MODBUSD_BINARY}" \
+            --pidfile "${MODBUSD_PIDFILE}" --quiet
+        eend $?
+}
+
+reload() {
+        checkconfig || return 1
+        ebegin "Reloading ${SVCNAME}"
+        start-stop-daemon --signal HUP \
+            --exec "${MODBUSD_BINARY}" --pidfile "${MODBUSD_PIDFILE}"
+        eend $?
+}
+

@@ -37,7 +37,7 @@ func main() {
 	serv.RegisterFunctionHandler(4, ReadRegisters)
 	serv.RegisterFunctionHandler(6, WriteRegisters)
 
-	err := serv.ListenTCP("127.0.0.1:502")
+	err := serv.ListenTCP(":502")
 	if err != nil {
 		log.Printf("%v\n", err)
 	}
