@@ -9,6 +9,9 @@ release: all git-tag
 	tar jcf ${PROGNAME}-`cat VERSION`.tar.bz2 ${PROGNAME}-`cat VERSION`
 	rm -rf ${PROGNAME}-`cat VERSION`
 
+src:
+	tar jcf ${PROGNAME}-src-`cat VERSION`.tar.bz2 *go README.md LICENSE Makefile VERSION modbustcpd
+
 git-tag: bump
 	git tag `cat VERSION`
 	git push --tags
