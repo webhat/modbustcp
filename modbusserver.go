@@ -103,6 +103,11 @@ func WriteHoldingRegisters(s *mbserver.Server, frame mbserver.Framer) ([]byte, *
 		return []byte{}, &mbserver.IllegalDataAddress
 	}
 
+	for i := 0; i < len(value); i += 2 {
+		b := value[i : i+2]
+		fmt.Println("Data ", register+(i/2), b)
+	}
+
 	data := make([]byte, 4)
 	data = frame.GetData()[0:4]
 
