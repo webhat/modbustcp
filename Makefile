@@ -24,3 +24,5 @@ bump:
 upload:
 	scp ${PROGNAME}-`cat VERSION`.tar.bz2 oplerno:/var/lib/lxd/containers/ateps-updates/rootfs/var/www/portage/distfiles/
 
+windows:
+	GOOS=windows GOARCH=386 go build

@@ -62,12 +62,15 @@ func ReadRegisters(s *mbserver.Server, frame mbserver.Framer) ([]byte, *mbserver
 	if (numRegs % 8) != 0 {
 		dataSize++
 	}
+	dataSize = dataSize*2
 	data := make([]byte, 1+dataSize)
 	data[0] = byte(dataSize)
-	for i := range s.DiscreteInputs[register:endRegister] {
+		fmt.Println(len(data))
+	for i, value := range s.HoldingRegisters[register:endRegister] {
 		// Return all 1s, regardless of the value in the DiscreteInputs array.
-		shift := uint(i) % 8
-		data[1+i/8] |= byte(1 << shift)
+		fmt.Println(i)
+		data[i+1] = byte(int(value / 256))
+		data[i+2] = byte(value % 256)
 	}
 	fmt.Println("READ: ", data)
 	return data, &mbserver.Success
@@ -85,7 +88,7 @@ func WriteRegisters(s *mbserver.Server, frame mbserver.Framer) ([]byte, *mbserve
 	data[1] = byte(register % 256)
 	data[2] = byte(int(value / 256))
 	data[3] = byte(value % 256)
-
+	s.HoldingRegisters[register] = value
 	fmt.Println("WRITE: ", data)
 
 	return data, &mbserver.Success
