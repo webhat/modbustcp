@@ -1,4 +1,4 @@
-modbustcp
+modbustcp*
 *.sw*
 #
 # Binaries for programs and plugins
@@ -15,4 +15,3 @@ modbustcp
 *.out
 modbus-demo-*.tar.bz2
 modbus-demo-*
-modbustcp

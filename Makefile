@@ -1,19 +1,19 @@
 
 PROGNAME="modbus-demo"
-OS := "$(shell uname -s)"
+TOOL="modbustcp"
+OS := $(shell uname -s)
 
 all: windows linux darwin
 ifeq ($(OS),Darwin)
-	BINARY="ln -sf ${PROGNAME}-darwin ${PROGNAME}"
-else
-ifeq ($(OS),Linux)
-	BINARY="ln -sf ${PROGNAME}-linux ${PROGNAME}"
+	ln -sf ${TOOL}-darwin ${TOOL}
 endif
+ifeq ($(OS),Linux)
+	ln -sf ${TOOL}-linux ${TOOL}
 endif
 
 release: all git-tag
 	mkdir ${PROGNAME}-`cat VERSION`
-	cp modbustcp modbustcpd LICENSE README.md ${PROGNAME}-`cat VERSION`
+	cp ${TOOL} ${TOOL}d LICENSE README.md ${PROGNAME}-`cat VERSION`
 	tar jcf ${PROGNAME}-`cat VERSION`.tar.bz2 ${PROGNAME}-`cat VERSION`
 	rm -rf ${PROGNAME}-`cat VERSION`
 
@@ -33,10 +33,10 @@ upload:
 	scp ${PROGNAME}-`cat VERSION`.tar.bz2 oplerno:/var/lib/lxd/containers/ateps-updates/rootfs/var/www/portage/distfiles/
 
 windows:
-	GOOS=windows GOARCH=386 go build 
+	GOOS=windows GOARCH=386 go build -o ${TOOL}.exe
 
 linux:
-	GOOS=linux GOARCH=amd64 go build -o ${PROGNAME}-linux
+	GOOS=linux GOARCH=amd64 go build -o ${TOOL}-linux
 
 darwin:
-	GOOS=darwin GOARCH=amd64 go	build -o ${PROGNAME}-darwin
+	GOOS=darwin GOARCH=amd64 go	build -o ${TOOL}-darwin
