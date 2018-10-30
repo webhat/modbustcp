@@ -58,19 +58,21 @@ func ReadRegisters(s *mbserver.Server, frame mbserver.Framer) ([]byte, *mbserver
 	if endRegister > 65535 {
 		return []byte{}, &mbserver.IllegalDataAddress
 	}
-	dataSize := numRegs / 8
+	dataSize := numRegs // / 8
 	if (numRegs % 8) != 0 {
-		dataSize++
+		//dataSize++
 	}
-	dataSize = dataSize*2
+	dataSize = dataSize * 2
 	data := make([]byte, 1+dataSize)
 	data[0] = byte(dataSize)
-		fmt.Println(len(data))
 	for i, value := range s.HoldingRegisters[register:endRegister] {
 		// Return all 1s, regardless of the value in the DiscreteInputs array.
-		fmt.Println(i)
-		data[i+1] = byte(int(value / 256))
-		data[i+2] = byte(value % 256)
+		value += 0xF00F
+		if (i*2)+2 > dataSize {
+			break
+		}
+		data[(i*2)+1] = byte(int(value / 256))
+		data[(i*2)+2] = byte(value % 256)
 	}
 	fmt.Println("READ: ", data)
 	return data, &mbserver.Success

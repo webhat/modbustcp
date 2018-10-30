@@ -25,7 +25,7 @@ git-tag: bump
 	git push --tags
 
 bump:
-	echo `cat VERSION`+.1 |bc  > VERSION.new
+	echo `cat VERSION`+.01 |bc  > VERSION.new
 	rm VERSION
 	mv VERSION.new VERSION
 
