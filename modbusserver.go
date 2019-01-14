@@ -67,7 +67,8 @@ func ReadRegisters(s *mbserver.Server, frame mbserver.Framer) ([]byte, *mbserver
 	data[0] = byte(dataSize)
 	for i, value := range s.HoldingRegisters[register:endRegister] {
 		// Return all 1s, regardless of the value in the DiscreteInputs array.
-		value += 0xF00F
+		value += 0x4370
+		//	value += 0xF00F
 		if (i*2)+2 > dataSize {
 			break
 		}
