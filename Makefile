@@ -24,7 +24,7 @@ PROGNAME="modbus-demo"
 TOOL="modbustcp"
 OS := $(shell uname -s)
 
-all: windows linux darwin
+all: test windows linux darwin
 ifeq ($(OS),Darwin)
 	ln -sf ${TOOL}-darwin ${TOOL}
 endif
@@ -61,3 +61,6 @@ linux:
 
 darwin:
 	GOOS=darwin GOARCH=amd64 go	build -o ${TOOL}-darwin
+
+test:
+	go test -v -test.failfast -coverprofile cover.out
